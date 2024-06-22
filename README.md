@@ -11,5 +11,5 @@ version: 1.0.0
 
 Developers:
 
-- Shubhayu Majumdar <shubhayumajumdar64@gmail.com>
+- Shubhayu Majumdar | <shubhayumajumdar64@gmail.com>
   
