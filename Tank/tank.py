@@ -17,7 +17,7 @@ APIs for different exchanges:
 Steps:
 - Ingest data from APIs and store in a database. This should cache all data since the begining till date.
     - Maybe make it modular because I want to learn building modules and packages.
-- Create a postfolio, with all the investments and liquidity pool.
+- Create a portfolio, with all the investments and liquidity pool.
 - Record all transactions and trades.
 - Execute Trades based on calls from Shark
 - Track and Log Performance
