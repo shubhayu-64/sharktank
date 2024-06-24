@@ -1,6 +1,5 @@
 import yaml
 
-
 class APIClient:
     def __init__(self, base_url, api_key=None):
         self.base_url = base_url
@@ -14,8 +13,6 @@ class APIClient:
     
     def fetch_historical_data(self, symbol, start_date, end_date):
         raise NotImplementedError("This method should be overridden by subclasses")
-
-
 
 class APIClientFactory:
     def __init__(self):
@@ -32,13 +29,17 @@ class APIClientFactory:
     
     def register_clients_from_config(self, config):
         for name, client_info in config['api_clients'].items():
-            client_class = globals()[client_info['class']]
+            if 'class' not in client_info:
+                raise ValueError(f"Missing 'class' key in client configuration: {client_info}")
+            module = __import__('Tank.coingecko_client', globals(), locals(), [client_info['class']], 0)
+            client_class = getattr(module, client_info['class'])
+            
             if 'api_key' in client_info:
                 client_instance = client_class(client_info['base_url'], client_info['api_key'])
             else:
                 client_instance = client_class(client_info['base_url'])
+            
             self.register_client(name, client_instance)
-
 
 def load_config(file_path):
     with open(file_path, 'r') as file:

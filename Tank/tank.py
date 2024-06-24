@@ -1,4 +1,4 @@
-
+# Tank/tank.py
 
 """
 
@@ -15,7 +15,7 @@ APIs for different exchanges:
 
 
 Steps:
-- Ingest data from APIs and store in a database. This should cache all data since the begining till date.
+- Ingest data from APIs and store in a database. This should cache all data since the beginning till date.
     - Maybe make it modular because I want to learn building modules and packages.
 - Create a portfolio, with all the investments and liquidity pool.
 - Record all transactions and trades.
@@ -26,4 +26,15 @@ Steps:
     - Set up alerts for significant events or failures (optional)
 
 """
+
+from Tank.base import APIClientFactory, load_config
+
+# Load configuration and initialize the factory
+config = load_config('config.yaml')
+factory = APIClientFactory()
+factory.register_clients_from_config(config)
+
+def get_current_price(coin, currency):
+    coingecko_client = factory.get_client('coingecko')
+    return coingecko_client.fetch_live_data(coin, currency)
 
