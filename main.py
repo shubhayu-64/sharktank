@@ -14,12 +14,19 @@ Hours: 0
 version: 1.0.0
 """
 
+from Shark.shark import shark_get_current_price
+from Tank.coingecko_client import CoinGeckoAPIClient
+from Tank.base import APIClientFactory, load_config
 
-# Some shitty comments I plan to use
+def main():
+    config = load_config('config.yaml')
+    factory = APIClientFactory()
+    factory.register_clients_from_config(config)
+    
+    currency = 'inr'
+    
+    coin = 'bitcoin'
+    shark_get_current_price(coin, currency)
 
-"""
-# a_toast = Exception("Something went wrong")
-# raise a_toast
-
-"""
-
+if __name__ == "__main__":
+    main()
