@@ -2,7 +2,7 @@ import yaml
 
 
 class APIClient:
-    def __init__(self, base_url, api_key=None):
+    def __init__(self, base_url=None, api_key=None):
         self.base_url = base_url
         self.api_key = api_key
     
