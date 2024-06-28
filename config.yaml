@@ -2,8 +2,16 @@
 
 api_clients:
   coingecko:
+
     url: https://api.coingecko.com/api/v3
   
   yahoo_finance:
     url: None
     
+
+    class: CoinGeckoClient
+    base_url: https://api.coingecko.com/api/v3
+  coindcx:
+    class: CoinDCXClient
+    base_url: https://public.coindcx.com
+    live_price_url: https://api.coindcx.com/exchange/ticker
