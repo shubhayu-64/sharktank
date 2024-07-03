@@ -26,7 +26,8 @@ def main():
     
     factory = APIClientFactory()
 
-    coindcx_client = CoinDCXAPIClient(config['api_clients']['coindcx']['base_url'], config['api_clients']['coindcx']['live_price_url'])
+    # coindcx_client = CoinDCXAPIClient(config['api_clients']['coindcx']['base_url'], config['api_clients']['coindcx']['live_price_url'])
+    coindcx_client = CoinDCXAPIClient()
     factory.register_client('coindcx', coindcx_client)
 
     ticker = 'I-MATIC_INR'
