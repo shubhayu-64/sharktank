@@ -1,7 +1,7 @@
 from datetime import datetime
 from pprint import pprint
 from Tank.Database.db import TankDB
-from Tank.Model.transactions import TransactionModel
+from Tank.Model.transactions import TransactionModel, TransactionType
 from Tank.base import APIClientFactory
 from Tank.Clients.yahoofinance_client import YahooFinanceAPIClient
 
@@ -53,24 +53,25 @@ def main():
 def test_db():
     data = {
         "date": int(datetime.now().timestamp()),
-        "type": "SELL",
+        "type": TransactionType.BUY,
         "asset": "AAPL",
         "quantity": 10,
         "price": 100,
         "fees": 0.1
     }
+    data["amount"] = data["quantity"] * data["price"] + data["fees"]
 
     data = TransactionModel(**data)
     tank_db = TankDB()
     # Insert a transaction using the insert_transaction method
     try:
-        new_transaction = tank_db.insert_transaction(data)
+        new_transaction = tank_db.create_transaction(data)
         print(f"Inserted Transaction ID: {new_transaction.id}")
     except Exception as e:
         print(f"Failed to insert transaction: {e}")
 
     # Retrieve all transactions
-    transactions = tank_db.get_transactions()
+    transactions = tank_db.read_transactions()
     for transaction in transactions:
         print(transaction.id, transaction.date, transaction.type, transaction.asset, transaction.quantity, transaction.price, transaction.fees)
         

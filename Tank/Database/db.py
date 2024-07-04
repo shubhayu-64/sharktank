@@ -10,17 +10,17 @@ class TankDB:
         database_path = f"sqlite:///{configs['DATABASE_NAME']}.db"
         self.engine = create_engine(database_path, echo=True)
         Base.metadata.create_all(self.engine)
-        self.SessionLocal = sessionmaker(bind=self.engine)
+        self.session_local = sessionmaker(bind=self.engine)
 
     @contextmanager
     def _get_db(self):
-        db = self.SessionLocal()
+        db = self.session_local()
         try:
             yield db
         finally:
             db.close()
 
-    def insert_transaction(self, transaction_data: TransactionModel):
+    def create_transaction(self, transaction_data: TransactionModel):
         with self._get_db() as db:
             try:
                 transaction_dict = transaction_data.dict()
@@ -35,6 +35,6 @@ class TankDB:
 
             return new_transaction
     
-    def get_transactions(self):
+    def read_transactions(self):
         with self._get_db() as db:
             return db.query(Transaction).all()

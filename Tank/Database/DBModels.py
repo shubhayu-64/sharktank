@@ -13,3 +13,4 @@ class Transaction(Base):
     quantity = Column(Float, nullable=False)
     price = Column(Float, nullable=False)
     fees = Column(Float, nullable=False)
+    amount = Column(Float, nullable=False)

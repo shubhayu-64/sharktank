@@ -41,12 +41,6 @@ Steps:
         - Price
         - Fees
         - Total Amount
-        - Net Worth
-        - Portfolio Value
-        - Portfolio Performance
-        - Portfolio Composition
-        - Portfolio Returns
-        - Portfolio Risk
 
 - Execute Trades based on calls from Shark
 - Track and Log Performance
