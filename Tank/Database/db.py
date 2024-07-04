@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 
 class TankDB:
     def __init__(self) -> None:
-        database_path = f"sqlite:///{configs["DATABASE_NAME"]}.db"
+        database_path = f"sqlite:///{configs['DATABASE_NAME']}.db"
         self.engine = create_engine(database_path, echo=True)
         Base.metadata.create_all(self.engine)
         self.SessionLocal = sessionmaker(bind=self.engine)
@@ -21,7 +21,6 @@ class TankDB:
             db.close()
 
     def insert_transaction(self, transaction_data: TransactionModel):
-
         with self._get_db() as db:
             try:
                 transaction_dict = transaction_data.dict()

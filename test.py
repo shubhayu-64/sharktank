@@ -3,10 +3,11 @@ from pprint import pprint
 from Tank.Database.db import TankDB
 from Tank.Model.transactions import TransactionModel
 from Tank.base import APIClientFactory
-from Tank.yahoofinance_client import YahooFinanceAPIClient
+from Tank.Clients.yahoofinance_client import YahooFinanceAPIClient
 
 import time
-from Tank.coindcx_client import CoinDCXAPIClient
+from Tank.Clients.coindcx_client import CoinDCXAPIClient
+from Tank.config import load_config
 
 def main():
     config = load_config('config.yaml')
