@@ -7,7 +7,8 @@ from sqlalchemy.orm import sessionmaker
 
 class TankDB:
     def __init__(self) -> None:
-        self.engine = create_engine(configs["DATABASE_URL"], echo=True)
+        database_path = f"sqlite:///{configs["DATABASE_NAME"]}.db"
+        self.engine = create_engine(database_path, echo=True)
         Base.metadata.create_all(self.engine)
         self.SessionLocal = sessionmaker(bind=self.engine)
 
