@@ -1,0 +1,40 @@
+from contextlib import contextmanager
+from Tank.config import configs
+from Tank.Database.DBModels import Base, Transaction
+from Tank.Model.transactions import TransactionModel
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+class TankDB:
+    def __init__(self) -> None:
+        self.engine = create_engine(configs["DATABASE_URL"], echo=True)
+        Base.metadata.create_all(self.engine)
+        self.SessionLocal = sessionmaker(bind=self.engine)
+
+    @contextmanager
+    def _get_db(self):
+        db = self.SessionLocal()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    def insert_transaction(self, transaction_data: TransactionModel):
+
+        with self._get_db() as db:
+            try:
+                transaction_dict = transaction_data.dict()
+                new_transaction = Transaction(**transaction_dict)
+                print(transaction_data)
+                db.add(new_transaction)
+                db.commit()
+                db.refresh(new_transaction)
+            except Exception as e:
+                db.rollback()
+                raise e
+
+            return new_transaction
+    
+    def get_transactions(self):
+        with self._get_db() as db:
+            return db.query(Transaction).all()

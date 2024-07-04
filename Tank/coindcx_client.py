@@ -1,5 +1,3 @@
-from typing import Literal
-from pydantic import BaseModel, Field
 import requests
 import pandas as pd
 import numpy as np
@@ -35,7 +33,7 @@ class CoinDCXAPIClient(APIClient):
             data = response.json()
 
             # Only take OHLC data
-            data = pd.DataFrame(data, columns=["timestamp", "open", "high", "low", "close", "volume"])
+            data = pd.DataFrame(data, columns=["open", "high", "low", "close"])
             data = np.array(data)
             return data
 

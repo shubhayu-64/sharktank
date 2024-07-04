@@ -18,7 +18,36 @@ Steps:
 - Ingest data from APIs and store in a database. This should cache all data since the begining till date.
     - Maybe make it modular because I want to learn building modules and packages.
 - Create a portfolio, with all the investments and liquidity pool.
+    - Params to define:
+        - Initial Investment
+        - Liquidity Pool
+        
+    - Portfolio:
+        - Investments
+        - Net Worth
+        - Portfolio Value
+        - Portfolio Performance
+        - Portfolio Composition
+        - Portfolio Returns
+        - Portfolio Risk
+
 - Record all transactions and trades.
+    Record all transactions and trades in a database.
+    - Params to record:
+        - Date
+        - Type of Transaction
+        - Asset
+        - Quantity
+        - Price
+        - Fees
+        - Total Amount
+        - Net Worth
+        - Portfolio Value
+        - Portfolio Performance
+        - Portfolio Composition
+        - Portfolio Returns
+        - Portfolio Risk
+
 - Execute Trades based on calls from Shark
 - Track and Log Performance
     - Calculate and log performance metrics (portfolio value, returns, etc.)

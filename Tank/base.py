@@ -1,6 +1,4 @@
 from typing import Optional
-import yaml
-
 
 class APIClient:
     VALID_API_TYPES = ["stock", "crypto"]
@@ -47,9 +45,3 @@ class APIClientFactory:
             else:
                 client_instance = client_class(client_info['base_url'])
             self.register_client(name, client_instance)
-
-
-def load_config(file_path):
-    with open(file_path, 'r') as file:
-        config = yaml.safe_load(file)
-    return config
