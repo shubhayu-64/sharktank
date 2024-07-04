@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 from Tank.config import configs
-from Tank.Database.DBModels import Base, Transaction
-from Tank.Model.transactions import TransactionModel
+from Tank.Database.DBModels import Base, Investment, Portfolio, Transaction
+from Tank.Model.transactions import InvestmentModel, PortfolioModel, TransactionModel
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -36,3 +36,31 @@ class TankDB:
     def read_transactions(self):
         with self._get_db() as db:
             return db.query(Transaction).all()
+    
+    
+    def add_investment(self, investment_data: InvestmentModel):
+        with self._get_db() as db:
+            try:
+                new_investment = Investment(**(investment_data.dict()))
+                db.add(new_investment)
+                db.commit()
+                db.refresh(new_investment)
+            except Exception as e:
+                db.rollback()
+                raise e
+
+            return new_investment
+    
+    
+    def add_portfolio(self, portfolio_data: PortfolioModel):
+        with self._get_db() as db:
+            try:
+                new_portfolio = Portfolio(**(portfolio_data.dict()))
+                db.add(new_portfolio)
+                db.commit()
+                db.refresh(new_portfolio)
+            except Exception as e:
+                db.rollback()
+                raise e
+
+            return new_portfolio
