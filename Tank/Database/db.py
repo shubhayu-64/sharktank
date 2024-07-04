@@ -23,9 +23,7 @@ class TankDB:
     def create_transaction(self, transaction_data: TransactionModel):
         with self._get_db() as db:
             try:
-                transaction_dict = transaction_data.dict()
-                new_transaction = Transaction(**transaction_dict)
-                print(transaction_data)
+                new_transaction = Transaction(**(transaction_data.dict()))
                 db.add(new_transaction)
                 db.commit()
                 db.refresh(new_transaction)

@@ -54,7 +54,7 @@ def test_db():
     data = {
         "date": int(datetime.now().timestamp()),
         "type": TransactionType.BUY,
-        "asset": "AAPL",
+        "asset": "GOOGL",
         "quantity": 10,
         "price": 100,
         "fees": 0.1
