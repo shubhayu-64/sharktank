@@ -1,13 +1,18 @@
-from datetime import datetime
-from Tank.Database.db import TankDB
-from Tank.Model.schemas import TransactionModel, TransactionType
-from Tank.base import APIClientFactory
+import time
+import logging
 
 from config import configs
-
-import time
-from Tank.Clients.coindcx_client import CoinDCXAPIClient
 from Tank.core import Tank
+from datetime import datetime
+from Tank.Database.db import TankDB
+from Tank.base import APIClientFactory
+from Tank.logging_config import setup_logging 
+from Tank.Clients.coindcx_client import CoinDCXAPIClient
+from Tank.Model.schemas import TransactionModel, TransactionType
+
+setup_logging() # Set up logging configuration
+
+logger = logging.getLogger(__name__) 
 
 def test():
     
@@ -15,19 +20,34 @@ def test():
     coindcx_client = CoinDCXAPIClient()
     factory.register_client('coindcx', coindcx_client)
 
+    ticker = 'I-MATIC_INR'
     symbol = "MATIC"
     timeSpan = configs["timeSpan"]
     
     client = factory.get_client('coindcx')
-    current_price = client.get_current_price(symbol)
-    # historical_data = client.fetch_historical_data(ticker, timeSpan)
-    # print("Historical Data:")
-    # print(historical_data)
+    try:
+        current_price = client.get_current_price(symbol)
+        logger.info(f"Fetched current price of {symbol}: {current_price}")
+    except Exception as e:
+        logger.error(f"Error in fetching current price for {symbol}: {e}")
+        return
+    
+    try:
+        historical_data = client.fetch_historical_data(ticker, timeSpan)
+        logger.info(f"Fetched historical data for {ticker}")
+    except Exception as e:
+        logger.error(f"Error in fetching historical data for {ticker}: {e}")
+        return        
+        
 
     print("Live Data:")
     for _ in range(5):  # Not looping infinite times
-        live_data = client.get_current_price(symbol)
-        print(live_data)
+        try:
+            live_data = client.get_current_price(symbol)
+            logger.info(f"Fetched current price of {symbol}: {live_data}")
+        except Exception as e:
+            logger.error(f"Error in fetching current price for {symbol}: {e}")
+            return            
         
         time.sleep(1)
 
@@ -47,12 +67,22 @@ def test_db():
     # Insert a transaction using the insert_transaction method
     try:
         new_transaction = tank_db.create_transaction(data)
-        print(f"Inserted Transaction ID: {new_transaction.id}")
+        # print(f"Inserted Transaction ID: {new_transaction.id}")
+        logger.info(f"Inserted Transaction ID: {new_transaction.id}")
     except Exception as e:
-        print(f"Failed to insert transaction: {e}")
+        logger.error(f"Failed to insert transaction: {e}")
+        # print(f"Failed to insert transaction: {e}")
+        return        
 
     # Retrieve all transactions
-    transactions = tank_db.read_transactions()
+    try:
+        transactions = tank_db.read_transactions()
+        logger.info(f"All DB transactions retreived at {datetime.now()}")
+    except Exception as e:
+        logger.error(f"Failed to retrieve transactions: {e}")
+        # print(f"Failed to retrieve transactions: {e}")
+        return
+    
     for transaction in transactions:
         print(transaction.id, transaction.date, transaction.type, transaction.asset, transaction.quantity, transaction.price, transaction.fees)
         
@@ -70,8 +100,8 @@ def test_tank():
 
 
 if __name__ == "__main__":
-    test()
+    # test()
     # test_db()
 
-    # test_tank()
+    test_tank()
 
