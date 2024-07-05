@@ -1,13 +1,14 @@
 from datetime import datetime
 from pprint import pprint
 from Tank.Database.db import TankDB
-from Tank.Model.transactions import TransactionModel, TransactionType
+from Tank.Model.schemas import TransactionModel, TransactionType
 from Tank.base import APIClientFactory
 from Tank.Clients.yahoofinance_client import YahooFinanceAPIClient
 
 import time
 from Tank.Clients.coindcx_client import CoinDCXAPIClient
 from Tank.config import load_config
+from Tank.core import Tank
 
 def main():
     config = load_config('config.yaml')
@@ -76,7 +77,21 @@ def test_db():
         print(transaction.id, transaction.date, transaction.type, transaction.asset, transaction.quantity, transaction.price, transaction.fees)
         
 
+def test_tank():
+    tank_db = TankDB()
+
+    tank = Tank(tank_db)
+
+    # Example usage of Tank class
+    tank.make_transaction(type=TransactionType.BUY, asset="AAPL", quantity=10)
+    tank.make_transaction(type=TransactionType.BUY, asset="AAPL", quantity=5)
+
+    print("\n\nTEST COMPLETED SUCCESSFULLY")
+
+
 if __name__ == "__main__":
     # main()
-    test_db()
+    # test_db()
+
+    test_tank()
 

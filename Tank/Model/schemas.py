@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 from typing import List
 from pydantic import BaseModel, Field
@@ -7,7 +8,7 @@ class TransactionType(str, Enum):
     SELL = "SELL"
 
 class TransactionModel(BaseModel):
-    date: int = Field(..., title="Date of Transaction", description="Date of Transaction")
+    date: int = Field(default_factory=lambda: int(datetime.now().timestamp()), title="Date of Transaction", description="Date of Transaction")
     type: TransactionType = Field(..., title="Type of Transaction", description="Type of Transaction")
     asset: str = Field(..., title="Asset", description="Ticker or name of asset")
     quantity: float = Field(..., title="Quantity", description="Quantity of asset")
@@ -15,8 +16,9 @@ class TransactionModel(BaseModel):
     fees: float = Field(default=0.0, title="Fees", description="Fees of transaction")
     amount: float = Field(..., title="Amount", description="Amount of transaction")
 
-# Update InvestmentModel | Picked from suggestions
+
 class InvestmentModel(BaseModel):
+    portfolio_id: int = Field(..., title="Portfolio ID", description="ID of portfolio")
     asset: str = Field(..., title="Asset", description="Ticker or name of asset")
     quantity: float = Field(..., title="Quantity", description="Quantity of asset")
     average_price: float = Field(..., title="Average Price", description="Average price of asset")
@@ -31,4 +33,5 @@ class PortfolioModel(BaseModel):
     portfolio_returns: float = Field(..., title="Portfolio Returns", description="Returns of portfolio")
     portfolio_risk: float = Field(..., title="Portfolio Risk", description="Risk of portfolio")
     
-    investments: List[InvestmentModel] = Field(..., title="Investments", description="List of investments")
+    # Might want to bring this back
+    # investments: List[InvestmentModel] = Field(..., title="Investments", description="List of investments")

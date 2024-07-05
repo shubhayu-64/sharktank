@@ -10,5 +10,6 @@ def load_config(file_path) -> dict:
 configs = {
     "investment": 1000,
     "liq_pool_limit": 10,
-    "DATABASE_NAME": 'tank',
+    "DATABASE_NAME": 'sharktank',
+    "fees": 0.0,
 }
