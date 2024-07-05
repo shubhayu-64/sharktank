@@ -1,4 +1,5 @@
 from datetime import datetime
+import random
 from Tank.Database.db import TankDB
 from Tank.Model.schemas import TransactionModel, TransactionType
 from Tank.base import APIClientFactory
@@ -58,20 +59,39 @@ def test_db():
         
 
 def test_tank():
+    # Initialize TankDB and APIClientFactory
     tank_db = TankDB()
+    client_factory = APIClientFactory()
+    coindcx_client = CoinDCXAPIClient()
+    client_factory.register_client('coindcx', coindcx_client)
 
-    tank = Tank(tank_db)
+    # Initialize Tank with TankDB and APIClientFactory
+    tank = Tank(tank_db, client_factory, 'coindcx')
 
     # Example usage of Tank class
-    tank.make_transaction(type=TransactionType.BUY, asset="AAPL", quantity=10)
-    tank.make_transaction(type=TransactionType.BUY, asset="AAPL", quantity=5)
+    # tank.make_transaction(type=TransactionType.BUY, asset="AAPL", quantity=10)
+    # tank.make_transaction(type=TransactionType.BUY, asset="AAPL", quantity=5)
+
+    tickers = ["BONK", "MATIC", "ZRO", "NEAR", "NEST"]
+
+    for _ in range(5):
+        for ticker in tickers:
+            try:
+                current_price = tank.api_client.get_current_price(ticker)
+                transaction_type = random.choice(list(TransactionType))
+                quantity = random.randint(10, 30)
+                tank.make_transaction(asset=ticker, quantity=quantity, type=transaction_type)
+            
+            except ValueError as e:
+                print(f"Error fetching current price for {ticker}: {str(e)}")
+                continue
 
     print("\n\nTEST COMPLETED SUCCESSFULLY")
 
 
 if __name__ == "__main__":
-    test()
+    # test()
     # test_db()
 
-    # test_tank()
+    test_tank()
 

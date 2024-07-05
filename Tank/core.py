@@ -2,19 +2,32 @@ from datetime import datetime
 import json
 from Tank.Database.db import TankDB
 from Tank.Model.schemas import InvestmentModel, PortfolioModel, TransactionModel, TransactionType
+from Tank.base import APIClientFactory
 
 
 class Tank:
-    def __init__(self, db: TankDB) -> None:
+    def __init__(self, db: TankDB, client_factory: APIClientFactory, client_name: str) -> None:
         self.db = db
         self.portfolio = self.db.init_portfolio()
-
+        self.api_client = client_factory.get_client(client_name)
 
     def make_transaction(self, asset: str, quantity: float, type: TransactionType) -> None:
 
-        # TODO: Get current price of asset from API
-        # For now, set price to 10.0
-        price = 10.0
+        # Validate transaction
+        if type == TransactionType.SELL:
+            investment = next((inv for inv in self.db.read_investments() if inv.asset == asset), None)
+            if not investment:
+                print(f"Cannot sell {asset}. Asset not found in investments.")
+                return
+            if quantity > investment.quantity:
+                print(f"Cannot sell {quantity} units of {asset}. Only {investment.quantity} units available.")
+                return
+
+        try:
+            price = self.api_client.get_current_price(asset)
+        except ValueError as e:
+            print(f"Error fetching current price for {asset}: {str(e)}")
+            return
 
         # Calculate amount
         # TODO: Update with fees. Add for buy and subtract for sell
@@ -50,9 +63,16 @@ class Tank:
 
         # Update portfolio
         investments = self.db.read_investments()
-        # TODO: Update this to get current value of all assets
-        # current_value = sum([inv.quantity * get_market_value(inv.asset) for inv in investments])
-        current_value = sum([inv.quantity * price for inv in investments])
+        current_values = {}
+        for investment in investments:
+            try:
+                current_price = self.api_client.get_current_price(investment.asset)
+                current_values[investment.asset] = current_price * investment.quantity
+            except ValueError as e:
+                print(f"Error fetching current price for {investment.asset}: {str(e)}")
+                current_values[investment.asset] = 0.0
+
+        current_value = sum(current_values.values())
         total_cost = sum([inv.quantity * inv.average_price for inv in investments])
 
         portfolio_data = PortfolioModel(
