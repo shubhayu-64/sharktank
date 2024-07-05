@@ -1,52 +1,32 @@
 from datetime import datetime
-from pprint import pprint
 from Tank.Database.db import TankDB
 from Tank.Model.schemas import TransactionModel, TransactionType
 from Tank.base import APIClientFactory
-from Tank.Clients.yahoofinance_client import YahooFinanceAPIClient
+
+from config import configs
 
 import time
 from Tank.Clients.coindcx_client import CoinDCXAPIClient
-from Tank.config import load_config
 from Tank.core import Tank
 
-def main():
-    config = load_config('config.yaml')
-
-    # Initialize APIClientFactory
-    client_factory = APIClientFactory()
-    
-    # Register YahooFinanceAPIClient manually
-    yahoo_finance_client = YahooFinanceAPIClient()
-    client_factory.register_client('yahoo_finance', yahoo_finance_client)
-
-    # Fetch live data for GOOGL using the registered client
-    client = client_factory.get_client('yahoo_finance')
-    nike_data = client.fetch_live_data('NKE')
-
-    # nike_info = client.fetch_info('NKE')
-    pprint(nike_data)
-
-    print(config)
+def test():
     
     factory = APIClientFactory()
-
-    # coindcx_client = CoinDCXAPIClient(config['api_clients']['coindcx']['base_url'], config['api_clients']['coindcx']['live_price_url'])
     coindcx_client = CoinDCXAPIClient()
     factory.register_client('coindcx', coindcx_client)
 
-    ticker = 'I-MATIC_INR'
-    symbol = "MATICINR"
-    timeSpan = 60
+    symbol = "MATIC"
+    timeSpan = configs["timeSpan"]
     
     client = factory.get_client('coindcx')
-    historical_data = client.fetch_historical_data(ticker, timeSpan)
-    print("Historical Data:")
-    print(historical_data)
+    current_price = client.get_current_price(symbol)
+    # historical_data = client.fetch_historical_data(ticker, timeSpan)
+    # print("Historical Data:")
+    # print(historical_data)
 
     print("Live Data:")
-    for count in range(5):  # Not looping infinite times
-        live_data = client.fetch_live_data(symbol)
+    for _ in range(5):  # Not looping infinite times
+        live_data = client.get_current_price(symbol)
         print(live_data)
         
         time.sleep(1)
@@ -90,8 +70,8 @@ def test_tank():
 
 
 if __name__ == "__main__":
-    # main()
+    test()
     # test_db()
 
-    test_tank()
+    # test_tank()
 

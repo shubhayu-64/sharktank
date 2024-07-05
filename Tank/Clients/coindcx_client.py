@@ -8,11 +8,29 @@ class CoinDCXAPIClient(APIClient):
         super().__init__(api_type="stock")
 
         self.market_data = "https://public.coindcx.com/market_data/candles"
-        self.live_price_url = "https://api.coindcx.com/exchange/ticker"
-
+        self.tickers = "https://api.coindcx.com/exchange/ticker"
+        self.market_details = "https://api.coindcx.com/exchange/v1/markets_details"
     
+
+    def _validate_ticker(self, ticker: str) -> dict:
+        response = requests.get(self.market_details)
+        data = response.json()
+        for item in data:
+            if item['target_currency_short_name'] == ticker:
+                return item
+        raise ValueError(f"Invalid ticker: {ticker}")
+    
+    def get_current_price(self, ticker: str):
+        validated_ticker = self._validate_ticker(ticker)
+        response = requests.get(self.tickers)
+        data = response.json()
+        try:
+            return next(float(item['last_price']) for item in data if item['market'] == validated_ticker['symbol'])
+        except StopIteration:
+            raise ValueError(f"No live data found for ticker: {ticker}")
+        
     def fetch_live_data(self, symbol):
-        url = self.live_price_url
+        url = self.tickers  
         response = requests.get(url)
         data = response.json()
         for item in data:

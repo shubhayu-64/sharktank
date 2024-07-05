@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from Tank.config import configs
+from config import configs
 from Tank.Database.DBModels import Base, Investment, Portfolio, Transaction
 from Tank.Model.schemas import InvestmentModel, PortfolioModel, TransactionModel
 from sqlalchemy import create_engine

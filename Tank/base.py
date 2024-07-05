@@ -37,11 +37,3 @@ class APIClientFactory:
             raise ValueError(f"No client registered under name: {name}")
         return client
     
-    def register_clients_from_config(self, config):
-        for name, client_info in config['api_clients'].items():
-            client_class = globals()[client_info['class']]
-            if 'api_key' in client_info:
-                client_instance = client_class(client_info['base_url'], client_info['api_key'])
-            else:
-                client_instance = client_class(client_info['base_url'])
-            self.register_client(name, client_instance)
