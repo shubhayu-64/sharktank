@@ -13,8 +13,6 @@ from Tank.Model.schemas import TransactionModel, TransactionType
 
 setup_logging() # Set up logging configuration
 
-# logger = logging.getLogger(__name__) 
-
 def test():
     
     factory = APIClientFactory()

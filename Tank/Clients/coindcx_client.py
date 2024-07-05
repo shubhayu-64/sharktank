@@ -38,13 +38,13 @@ class CoinDCXAPIClient(APIClient):
                 return float(item['last_price'])
         raise ValueError(f"No live data found for symbol: {symbol}")
     
-    def fetch_historical_data(self, ticker: str, timeSpan: int, interval: str = "1m"):
+    def fetch_historical_data(self, ticker: str, time_span: int, interval: str = "1m"):
 
-        validIntervals = ['1m','5m','15m','30m','1h','2h','4h','6h','8h','1d','3d','1w','1M']
-        if interval not in validIntervals:
-            raise ValueError(f"Invalid interval: {interval}. Valid intervals are: {validIntervals}")
+        valid_intervals = ['1m','5m','15m','30m','1h','2h','4h','6h','8h','1d','3d','1w','1M']
+        if interval not in valid_intervals:
+            raise ValueError(f"Invalid interval: {interval}. Valid intervals are: {valid_intervals}")
 
-        url = f"{self.market_data}?pair={ticker}&interval={interval}&limit={timeSpan}"
+        url = f"{self.market_data}?pair={ticker}&interval={interval}&limit={time_span}"
 
         try: 
             response = requests.get(url)
@@ -55,7 +55,6 @@ class CoinDCXAPIClient(APIClient):
             data = np.array(data)
             return data
 
-        except: 
-            raise ValueError(f"Error fetching data for ticker: {ticker}")
-
+        except Exception as e: 
+            raise ValueError(f"Error in fetching historical data for {ticker}: {e}")
         
