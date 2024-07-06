@@ -97,7 +97,7 @@ class Tank:
             net_worth=current_value,                                                                            # This is the total value of the portfolio
             portfolio_value=current_value,                                                                      # This is the total I have spent on average to buy all stocks
             portfolio_composition=json.dumps({inv.asset: inv.quantity for inv in investments}),                 # This is the composition of the portfolio
-            portfolio_returns=returns,                                                                          # This is the returns of the portfolio
+            portfolio_returns=returns,                                                                          # This is the % returns of the portfolio
             portfolio_risk=5.0                                                                                  # This should be calculated based on actual risk assessment models
         )
 
