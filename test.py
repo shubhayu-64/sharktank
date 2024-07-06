@@ -97,29 +97,30 @@ def test_tank():
     tank = Tank(tank_db, client_factory, 'coindcx')
 
     # Example usage of Tank class
-    # tank.make_transaction(type=TransactionType.BUY, asset="AAPL", quantity=10)
-    # tank.make_transaction(type=TransactionType.BUY, asset="AAPL", quantity=5)
+    # tank.make_transaction(type=TransactionType.BUY, asset="MATIC", quantity=10)
+    tank.make_transaction(type=TransactionType.SELL, asset="MATIC", quantity=5)
 
-    tickers = ["BONK", "MATIC", "ZRO", "NEAR", "NEST"]
+    # tickers = ["BONK", "MATIC", "ZRO", "NEAR", "NEST"]
 
-    for _ in range(1):
-        for ticker in tickers:
-            try:
-                # current_price = tank.api_client.get_current_price(ticker)
-                transaction_type = random.choice(list(TransactionType))
-                quantity = random.randint(10, 30)
-                tank.make_transaction(asset=ticker, quantity=quantity, type=transaction_type)
+    # for _ in range(10):
+    #     for ticker in tickers:
+    #         try:
+    #             # current_price = tank.api_client.get_current_price(ticker)
+    #             # transaction_type = random.choice(list(TransactionType))
+    #             transaction_type = TransactionType.SELL
+    #             quantity = random.randint(10, 30)
+    #             tank.make_transaction(asset=ticker, quantity=quantity, type=transaction_type)
             
-            except ValueError as e:
-                print(f"Error fetching current price for {ticker}: {str(e)}")
-                continue
+    #         except ValueError as e:
+    #             print(f"Error fetching current price for {ticker}: {str(e)}")
+    #             continue
 
     print("\n\nTEST COMPLETED SUCCESSFULLY")
 
 
 if __name__ == "__main__":
-    test()
+    # test()
     # test_db()
 
-    # test_tank()
+    test_tank()
 

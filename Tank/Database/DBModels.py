@@ -32,9 +32,9 @@ class Portfolio(Base):
     __tablename__ = 'portfolios'
     
     id = Column(Integer, primary_key=True, autoincrement=True)
+    liquid_cash = Column(Float, nullable=False)
     net_worth = Column(Float, nullable=False)
     portfolio_value = Column(Float, nullable=False)
-    portfolio_performance = Column(Float, nullable=False)
     portfolio_composition = Column(String, nullable=False)  # Consider storing as JSON string
     portfolio_returns = Column(Float, nullable=False)
     portfolio_risk = Column(Float, nullable=False)

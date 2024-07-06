@@ -25,7 +25,7 @@ class CoinDCXAPIClient(APIClient):
         response = requests.get(self.tickers)
         data = response.json()
         try:
-            return next(float(item['last_price']) for item in data if item['market'] == validated_ticker['symbol'])
+            return next(float(item['last_price']) for item in data if item['market'] == validated_ticker['symbol']) + 10
         except StopIteration:
             raise ValueError(f"No live data found for ticker: {ticker}")
         

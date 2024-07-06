@@ -26,9 +26,9 @@ class InvestmentModel(BaseModel):
 
 # Update InvestmentModel | Picked from suggestions
 class PortfolioModel(BaseModel):
+    liquid_cash: float = Field(..., title="Liquid Cash", description="Liquid cash available")
     net_worth: float = Field(..., title="Net Worth", description="Net worth of portfolio")
     portfolio_value: float = Field(..., title="Portfolio Value", description="Value of portfolio")
-    portfolio_performance: float = Field(..., title="Portfolio Performance", description="Performance of portfolio")
     portfolio_composition: str = Field(..., title="Portfolio Composition", description="Composition of portfolio")
     portfolio_returns: float = Field(..., title="Portfolio Returns", description="Returns of portfolio")
     portfolio_risk: float = Field(..., title="Portfolio Risk", description="Risk of portfolio")

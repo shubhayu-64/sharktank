@@ -24,6 +24,7 @@ class TankDB:
         portfolio = self.get_portfolio()
         if not portfolio:
             portfolio_data = PortfolioModel(
+                liquid_cash=configs["INITIAL_CASH"],
                 net_worth=0.0,
                 portfolio_value=0.0,
                 portfolio_performance=0.0,
@@ -109,7 +110,7 @@ class TankDB:
             try:
                 portfolio = db.query(Portfolio).first()
                 if portfolio:
-                    fields_to_update = ['net_worth', 'portfolio_value', 'portfolio_performance', 'portfolio_composition', 'portfolio_returns', 'portfolio_risk']
+                    fields_to_update = ['liquid_cash', 'net_worth', 'portfolio_value', 'portfolio_composition', 'portfolio_returns', 'portfolio_risk']
                     for field in fields_to_update:
                         setattr(portfolio, field, getattr(portfolio_data, field))
                     db.commit()

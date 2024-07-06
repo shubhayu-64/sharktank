@@ -3,6 +3,7 @@ import logging
 from Tank.Database.db import TankDB
 from Tank.Model.schemas import InvestmentModel, PortfolioModel, TransactionModel, TransactionType
 from Tank.base import APIClientFactory
+from config import configs
 
 
 class Tank:
@@ -31,7 +32,13 @@ class Tank:
             Raises:
                 None
         """
-        if type == TransactionType.SELL:
+        if type == TransactionType.BUY:
+            amount = self._calculate_amount(self.api_client.get_current_price(asset), quantity, type)
+            portfolio = self.db.get_portfolio()
+            if amount > portfolio.liquid_cash:
+                logging.error(f"Not enough liquid cash to buy {quantity} units of {asset}. Available: {portfolio.liquid_cash}")
+                return False
+        elif type == TransactionType.SELL:
             investment = next((inv for inv in self.db.read_investments() if inv.asset == asset), None)
             if not investment:
                 logging.error(f"Cannot sell {asset}. Asset not found in investments.")
@@ -59,17 +66,9 @@ class Tank:
         self.db.update_investment(asset, total_quantity, new_average_price)
     
     
-    def _update_portfolio(self) -> None:
+    def _update_portfolio(self, amount: float, type: TransactionType) -> None:
         """
             Updates the portfolio with the latest data from all current investments.
-
-            This method performs the following steps:
-            1. Reads the current investments from the database.
-            2. Fetches the current price of each investment asset.
-            3. Calculates the current value of each investment.
-            4. Calculates the total current value and cost of the portfolio.
-            5. Updates the portfolio model with the latest net worth, portfolio value, performance, composition, returns, and risk.
-            6. Saves the updated portfolio data to the database.
 
             Raises:
                 ValueError: If there's an error fetching the current price for any investment asset.
@@ -86,14 +85,20 @@ class Tank:
 
         current_value = sum(current_values.values())
         total_cost = sum([inv.quantity * inv.average_price for inv in investments])
+        
+        # Fetch current liquid cash
+        portfolio = self.db.get_portfolio()
+        
+        liquidity_pool = portfolio.liquid_cash - amount if type == TransactionType.BUY else portfolio.liquid_cash + amount
+        returns = (current_value - total_cost) / total_cost * 100 if total_cost != 0 else 0
 
         portfolio_data = PortfolioModel(
-            net_worth=current_value,
-            portfolio_value=current_value,
-            portfolio_performance=(current_value - total_cost) / total_cost * 100 if total_cost != 0 else 0,
-            portfolio_composition=json.dumps({inv.asset: inv.quantity for inv in investments}),
-            portfolio_returns=(current_value - total_cost) / total_cost * 100 if total_cost != 0 else 0,
-            portfolio_risk=5.0  # This should be calculated based on actual risk assessment models
+            liquid_cash=liquidity_pool,                                                                         # This is the amount of cash available to buy more stocks              
+            net_worth=current_value,                                                                            # This is the total value of the portfolio
+            portfolio_value=current_value,                                                                      # This is the total I have spent on average to buy all stocks
+            portfolio_composition=json.dumps({inv.asset: inv.quantity for inv in investments}),                 # This is the composition of the portfolio
+            portfolio_returns=returns,                                                                          # This is the returns of the portfolio
+            portfolio_risk=5.0                                                                                  # This should be calculated based on actual risk assessment models
         )
 
         self.db.update_portfolio(portfolio_data)
@@ -103,21 +108,10 @@ class Tank:
         """
             Executes a transaction by validating, recording, and updating the necessary records.
 
-            This function performs the following steps:
-            1. Validates the transaction.
-            2. Fetches the current price of the asset.
-            3. Calculates the transaction amount.
-            4. Creates and records the transaction in the database.
-            5. Updates the investment record.
-            6. Updates the portfolio record.
-
             Args:
                 asset (str): The symbol of the asset to be bought or sold.
                 quantity (float): The quantity of the asset to be bought or sold.
                 type (TransactionType): The type of transaction (BUY or SELL).
-
-            Returns:
-                None
         """
 
         # Validate transaction
@@ -144,4 +138,6 @@ class Tank:
 
         # Update investments and portfolio
         self._update_investment(asset, quantity, type, amount)
-        self._update_portfolio()
+        self._update_portfolio(amount, type)
+        
+        logging.info(f"Transaction successful: {type} {quantity} units of {asset} at {price} per unit.")
